@@ -1,0 +1,114 @@
+<div class="overlay" *ngIf="isModalVisible"></div>
+<div class="container">
+  <nav>
+    <img src="logo.png" alt="Logo">
+    <a href="#">ГЛАВНАЯ</a>
+    <a href="#">БЛОГ</a>
+    <a href="#">АУКЦИОН</a>
+  </nav>
+
+  <div class="inner-container">
+    <h1>Регистрация</h1>
+
+    <div class="input-container">
+      <label for="phoneNumberPrefix">Номер телефона
+        <span class="error" *ngIf="isFormSubmitted && phoneInvalid">Неверный формат номера</span>
+      </label>
+      <input
+        placeholder="(33) 415 78 90"
+        type="tel"
+        name="phone"
+        id="phoneNumberPrefix"
+        hlmInput
+        [(ngModel)]="phoneValue"
+        (input)="handleInputChange($event)"
+        [ngClass]="{
+          'valid': isFormSubmitted && !phoneInvalid,
+          'invalid': isFormSubmitted && phoneInvalid
+        }"
+      />
+    </div>
+
+    <div class="input-container password1">
+      <label for="password1">Пароль
+        <span class="error" *ngIf="isFormSubmitted && passwordMismatch">Пароль не совпадает</span>
+        <span class="error" *ngIf="isFormSubmitted && !passwordMismatch && passwordTooShort">Пароль слишком короткий</span>
+        <span class="error" *ngIf="isFormSubmitted && !passwordMismatch && !passwordTooShort && invalidPasswordChars">Неверные символы</span>
+      </label>
+      <input
+        [(ngModel)]="password1Value"
+        id="password1"
+        [type]="password1Visible ? 'text' : 'password'"
+        class="password1 passwordInput"
+        (input)="handleInputChange($event)"
+        [ngClass]="{
+          'valid': isFormSubmitted && !passwordInvalid && !passwordMismatch && !passwordTooShort && !invalidPasswordChars,
+          'invalid': isFormSubmitted && (passwordInvalid || passwordMismatch || passwordTooShort || invalidPasswordChars)
+        }"
+        name="password1"
+        hlmInput
+      />
+      <button type="button" hlmBtn variant='ghost' (click)="togglePasswordVisibility1()">
+        <hlm-icon [name]="password1Visible ? 'lucideEye' : 'lucideEyeOff'" size='sm'></hlm-icon>
+      </button>
+    </div>
+
+    <div class="input-container password2">
+      <label for="password2">Подтвердите пароль
+        <span class="error" *ngIf="isFormSubmitted && passwordMismatch">Пароль не совпадает</span>
+        <span class="error" *ngIf="isFormSubmitted && !passwordMismatch && passwordTooShort">Пароль слишком короткий</span>
+        <span class="error" *ngIf="isFormSubmitted && !passwordMismatch && !passwordTooShort && invalidPasswordChars">Неверные символы</span>
+      </label>
+      <input
+        [(ngModel)]="password2Value"
+        id="password2"
+        [type]="password2Visible ? 'text' : 'password'"
+        class="password2 passwordInput"
+        (input)="handleInputChange($event)"
+        [ngClass]="{
+          'valid': isFormSubmitted && !passwordInvalid && !passwordMismatch && !passwordTooShort && !invalidPasswordChars,
+          'invalid': isFormSubmitted && (passwordInvalid || passwordMismatch || passwordTooShort || invalidPasswordChars)
+        }"
+        name="password2"
+        hlmInput
+      />
+      <button type="button" hlmBtn variant='ghost' (click)="togglePasswordVisibility2()">
+        <hlm-icon [name]="password2Visible ? 'lucideEye' : 'lucideEyeOff'" size='sm'></hlm-icon>
+      </button>
+    </div>
+
+    <label class="flex items-center" hlmLabel>
+      <hlm-checkbox class="mr-2" [(ngModel)]="rememberMe" />
+      Запомнить меня
+    </label>
+
+    <button hlmBtn class="submitRegistrationBtn" (click)="submitRegistration()">Зарегистрироваться</button>
+  </div>
+</div>
+
+<div class="modal" id="modal" [ngClass]="{ 'show': isModalVisible }">
+  <button id="closeBtn" (click)="closeModal()"><img src="close.png" alt=""></button>
+  <div class="modal-container">
+      <div class="head">
+          <img src="confirm.png" alt="">
+          <div class="head-text">
+              <h1>Подтверждение номера телефона</h1>
+              <p>Не беспокойтесь!</p>
+              <p>Это базовая процедура</p>
+          </div>
+      </div>
+
+      <div class="main">
+          <h2>Код подтверждения номера телефона</h2>
+          <p>На Ваш номер телефона <span>**********{{this.phoneValue.substring(this.phoneValue.length - 2)}}</span> было отправлено сообщение 
+              с кодом подтверждения регистрации. Введите полученный код в поле:</p>
+          <code-input [isCodeHidden]="false"
+                      [codeLength]="6"
+                      (codeChanged)="onCodeChanged($event)"
+                      (codeCompleted)="onCodeCompleted($event)">
+          </code-input>
+      </div>
+
+      <p class="resend" (click)="resendCode()"><span style="margin-right: 10px;">{{ formattedTime }}</span> Отправить код повторно</p>
+  </div>
+</div>
